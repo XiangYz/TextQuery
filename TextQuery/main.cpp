@@ -53,7 +53,7 @@ bool GetToken(std::string& expression, int& it, std::string& token)
 	return false;
 }
 
-void err_exit(std::string& str)
+void err_exit(std::string str)
 {
 	std::cerr << str << std::endl;
 	exit(-1);
@@ -105,14 +105,17 @@ std::string ToPostExpression(std::string& expression)
 			{
 				std::string top = trans_stack.top();
 				trans_stack.pop();
-				if (top == "(")
+				if (top == "(" )
 				{
-					top = trans_stack.top();
-					if (top == "~")
-					{
-						trans_stack.pop();
-						post_expression.append("~ ");
-					}
+                    if (!trans_stack.empty())
+                    {
+					    top = trans_stack.top();
+					    if (top == "~")
+					    {
+						    trans_stack.pop();
+						    post_expression.append("~ ");
+					    }
+                    }
 
 					break;
 				}
@@ -153,6 +156,7 @@ int main(int argc, char* argv[])
 
 	std::ifstream ifs(path);
 	if (!ifs) err_exit(std::string("Cannot open target file"));
+	TextQuery tq(ifs);
 
 	std::string expression;
 	std::string post_expression;
@@ -161,7 +165,7 @@ int main(int argc, char* argv[])
 
 	while (true)  // ²éÑ¯Ñ­»·
 	{
-		std::cout << "Input your expression: ";
+        std::cout << "Input your expression: " << std::endl;
 		std::getline(std::cin, expression);
 		if (expression == "q") break;
 		if (expression.empty()) continue;
@@ -220,7 +224,6 @@ int main(int argc, char* argv[])
 		Query res = calc_stack.top();
 		calc_stack.pop();
 
-		TextQuery tq(ifs);
 		QueryResult qr = res.eval(tq);
 		print(std::cout, qr);
 
