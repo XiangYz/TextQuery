@@ -1,0 +1,7 @@
+*.sdf
+/Debug
+/Release
+/TextQuery/Debug
+/TextQuery/Release
+/.vs
+*.opensdf

@@ -7,6 +7,55 @@
 #include <set>
 #include <iterator>
 #include <sstream>
+#include <cctype>
+
+bool GetWordOrPunc(std::string& expression, int& it, std::string& token)
+{
+	std::string word;
+	bool res = false;
+	while (it != expression.length())
+	{
+		char ch = expression[it++];
+
+		if (std::ispunct(ch))
+		{
+			if (word.empty())
+			{
+				char s[5] = { 0 };
+				s[0] = ch;
+				token = std::string(s);
+				return true;
+			}
+			else
+			{
+				--it;
+				token = word;
+				return true;
+			}
+		}
+		else if (std::isspace(ch))
+		{
+			if (!word.empty())
+			{
+				token = word;
+				return true;
+			}
+		}
+		else if (std::isalnum(ch))
+		{
+			word.insert(word.end(), ch);
+		}
+	} // while it != end
+
+	if (!word.empty())
+	{
+		token = word;
+		return true;
+	}
+
+	return false;
+}
+
 
 
 class QueryResult
@@ -74,9 +123,10 @@ public:
 		while (std::getline(ifs, line))
 		{
 			_file->push_back(line);
-			std::istringstream iss(line);
+
+			int it = 0;
 			std::string word;
-			while (iss >> word)
+			while (GetWordOrPunc(line, it, word))
 			{
 				auto it = _words_map.find(word);
 				if (it == _words_map.end())
@@ -90,7 +140,7 @@ public:
 
 	QueryResult query(const std::string &word) const
 	{
-		static std::shared_ptr<std::set<line_no> > no_data;
+		static std::shared_ptr<std::set<line_no> > no_data(new std::set<line_no>);
 
 		auto it_find = _words_map.find(word);
 		if (it_find == _words_map.end())

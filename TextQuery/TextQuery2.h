@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cctype>
 
+
 // 所有查询的抽象基类
 class Query_base
 {
@@ -66,40 +67,9 @@ class WordQuery : public Query_base
 // 先有了WordQuery的定义才能定义Query类的这个构造函数
 // 难道不应该在这个函数中进行输入字符串的解析么
 inline Query::Query(const std::string& s)
-	//:q(new WordQuery(s))
+	:q(new WordQuery(s))
 {
-	std::string::const_iterator it = s.begin();
-	std::string word;
-	while (it != s.end())
-	{
-		char ch = *it;
-		if (std::isalpha(ch))
-		{
-			word.insert(word.end(), ch);
-		}
-		else if (std::isspace(ch))
-		{
-
-		}
-		else if (ch == '|')
-		{
-
-		}
-		else if (ch == '&')
-		{
-
-		}
-		else if (ch == '~')
-		{
-
-		}
-		else
-		{
-			exit(-1);
-		}
-
-		++it;
-	}
+	
 }
 
 class NotQuery : public Query_base
@@ -205,18 +175,4 @@ QueryResult NotQuery::eval(const TextQuery& text) const
 	}
 
 	return QueryResult(result.get_file(), ret_lines, rep());
-}
-
-
-void runQueries(std::ifstream& ifs)
-{
-	TextQuery tq(ifs);
-	std::string sin;
-	while (true)
-	{
-		std::cout << "Enter a word or 'q' to quit: ";
-		if (!(std::cin >> sin) || sin == "q") break;
-		QueryResult qr = tq.query(sin);
-		print(std::cout, qr) << std::endl;
-	} // while true
 }
