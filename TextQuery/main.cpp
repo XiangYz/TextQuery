@@ -6,13 +6,13 @@
 #include "TextQuery2.h"
 
 
-bool GetToken(std::string& expression, int& it, std::string& token)
+bool GetToken(std::string& expression, std::string::iterator& it, std::string& token)
 {
 	std::string word;
 	bool res = false;
-	while (it != expression.length())
+	while (it != expression.end())
 	{
-		char ch = expression[it++];
+		char ch = *it++;
 
 		if (ch == '&' || ch == '|' || ch == '~' || ch == '(' || ch == ')')
 		{
@@ -63,7 +63,7 @@ std::string ToPostExpression(std::string& expression)
 {
 	std::string post_expression;
 	std::stack<std::string> trans_stack;
-	int it = 0;
+	std::string::iterator it = expression.begin();
 	
 	while (true)
 	{
@@ -86,7 +86,8 @@ std::string ToPostExpression(std::string& expression)
 
 			if (word == "(")
 			{
-				trans_stack.push(word);
+				trans_stack.push("~");
+				trans_stack.push("(");
 			}
 			else // ~后面的不是左括号就一定是单词
 			{
@@ -173,7 +174,7 @@ int main(int argc, char* argv[])
 		post_expression = ToPostExpression(expression);
 
 		std::string word;
-		int it = 0;
+		std::string::iterator it = post_expression.begin();
 		while (GetToken(post_expression, it, word))
 		{
 			if (word == "&")

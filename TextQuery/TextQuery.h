@@ -9,13 +9,13 @@
 #include <sstream>
 #include <cctype>
 
-bool GetWordOrPunc(std::string& expression, int& it, std::string& token)
+bool GetWordOrPunc(std::string& expression, std::string::iterator& it, std::string& token)
 {
 	std::string word;
 	bool res = false;
-	while (it != expression.length())
+	while (it != expression.end())
 	{
-		char ch = expression[it++];
+		char ch = *it++;
 
 		if (std::ispunct(ch))
 		{
@@ -124,7 +124,7 @@ public:
 		{
 			_file->push_back(line);
 
-			int it = 0;
+			std::string::iterator it = line.begin();
 			std::string word;
 			while (GetWordOrPunc(line, it, word))
 			{
